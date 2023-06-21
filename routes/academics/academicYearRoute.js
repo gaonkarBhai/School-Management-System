@@ -3,13 +3,23 @@ const {
   createAcademicYear,
   getAllAcademicYear,
   getSingleAcademicYear,
+  updateAcademicYear,
+  deleteAcademicYear,
 } = require("../../controllers/academics/academicYearController");
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin"); 
 
-academicYearRouter.post("/",isLogin, isAdmin,createAcademicYear);
-academicYearRouter.get("/", isLogin, isAdmin, getAllAcademicYear);
-academicYearRouter.get("/:id", isLogin, isAdmin, getSingleAcademicYear);
+// express route chaining
+academicYearRouter
+  .route("/")
+  .post(isLogin, isAdmin, createAcademicYear)
+  .get(isLogin, isAdmin, getAllAcademicYear);
+
+academicYearRouter
+  .route("/:id")
+  .get(isLogin, isAdmin, getSingleAcademicYear)
+  .put(isLogin, isAdmin, updateAcademicYear)
+  .delete(isLogin, isAdmin, deleteAcademicYear);
 
 module.exports=academicYearRouter
 
