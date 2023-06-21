@@ -13,12 +13,11 @@ const subjectSchema = new mongoose.Schema(
     teacher: {
       type: mongoose.Types.ObjectId,
       ref: "Teacher",
-      required: [true, "Subject teacher ID must be provided"],
     },
     academicTerm: {
       type: mongoose.Types.ObjectId,
       ref: "AcademicTerm",
-      required: [true, "Academic Term ID must be provided"],
+      // required: [true, "Academic Term ID must be provided"],
     },
     createdBy: {
       type: mongoose.Types.ObjectId,

@@ -6,6 +6,10 @@ const programSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name of the program must be provided"],
     },
+    description: {
+      type: String,
+      required: [true, "Description must be provided"],
+    },
     duration: {
       type: String,
       default: "4 years",
@@ -40,15 +44,15 @@ const programSchema = new mongoose.Schema(
     student: [
       {
         type: mongoose.Types.ObjectId,
-        ref:"Student",
-        default:[]
+        ref: "Student",
+        default: [],
       },
     ],
-    subject: [
+    subjects: [
       {
         type: mongoose.Types.ObjectId,
-        ref:"Subject",
-        default:[]
+        ref: "Subject",
+        default: [],
       },
     ],
   },

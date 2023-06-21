@@ -50,6 +50,18 @@ const adminSchema = new mongoose.Schema(
         ref: "Student",
       },
     ],
+    programs: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Program",
+      },
+    ],
+    yearGroups: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "YearGroup",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -7,6 +7,10 @@ const adminRouter = require("../routes/staff/adminRouter");
 const academicYearRouter = require("../routes/academics/academicYearRoute");
 const academicTermRouter = require("../routes/academics/academicTermRoute");
 const classLevelRouter = require("../routes/academics/classLevelRoute");
+const programRouter = require("../routes/academics/programRoute");
+const subjectRouter = require("../routes/academics/subjectRoute");
+const yearGroupRouter = require("../routes/academics/yearGroupRoute");
+
 const {
   globalErrorHandler,
   notFound,
@@ -21,6 +25,9 @@ app.use("/api/v1/admins", adminRouter); // Admin Router
 app.use("/api/v1/academic-years", academicYearRouter); // Academic Year Router
 app.use("/api/v1/academic-terms", academicTermRouter); // Academic Term Router
 app.use("/api/v1/class-levels", classLevelRouter); // Class Level Router
+app.use("/api/v1/programs", programRouter); // Program Router
+app.use("/api/v1/subjects", subjectRouter); // Subject Router
+app.use("/api/v1/year-groups", yearGroupRouter); // Year GroupRouter 
 
 // Error handler's (middleware)
 app.use(notFound);
