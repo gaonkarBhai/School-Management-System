@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const app = express();
 
 const adminRouter = require("../routes/staff/adminRouter");
+const teacherRouter = require("../routes/staff/teacherRouter");
 const academicYearRouter = require("../routes/academics/academicYearRoute");
 const academicTermRouter = require("../routes/academics/academicTermRoute");
 const classLevelRouter = require("../routes/academics/classLevelRoute");
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/v1/admins", adminRouter); // Admin Router
+app.use("/api/v1/teachers", teacherRouter); // Teacher Router
 app.use("/api/v1/academic-years", academicYearRouter); // Academic Year Router
 app.use("/api/v1/academic-terms", academicTermRouter); // Academic Term Router
 app.use("/api/v1/class-levels", classLevelRouter); // Class Level Router

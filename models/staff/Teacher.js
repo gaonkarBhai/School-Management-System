@@ -50,7 +50,7 @@ const teacherSchema = new mongoose.Schema(
     subject: {
       type: mongoose.Types.ObjectId,
       ref: "Subject",
-      required: [true, "Subject ID must be provided"],
+      // required: [true, "Subject ID must be provided"],
     },
     applicationStatus: {
       type: String,
@@ -60,17 +60,17 @@ const teacherSchema = new mongoose.Schema(
     program: {
       type: mongoose.Types.ObjectId,
       ref: "Program",
-      required: [true, "program ID must be provided"],
+      // required: [true, "program ID must be provided"],
     },
     classLevel: {
       type: mongoose.Types.ObjectId,
       ref: "ClassLevel",
-      required: [true, "ClassLevel ID must be provided"],
+      // required: [true, "ClassLevel ID must be provided"],
     },
     academicYear: {
       type: mongoose.Types.ObjectId,
       ref: "AcademicYear",
-      required: [true, "AcademicYear ID must be provided"],
+      // required: [true, "AcademicYear ID must be provided"],
     },
     examCreated: [
       {
@@ -81,12 +81,12 @@ const teacherSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: "Admin",
-      required: [true, "Admin ID must be provided"],
+      // required: [true, "Admin ID must be provided"],
     },
     academicTerm: {
       type: mongoose.Types.ObjectId,
       ref: "AcademicTerm",
-      required: [true, "Academic Term ID must be provided"],
+      // required: [true, "Academic Term ID must be provided"],
     },
   },
   { timestamps: true }
