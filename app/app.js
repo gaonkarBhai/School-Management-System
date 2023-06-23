@@ -11,6 +11,7 @@ const classLevelRouter = require("../routes/academics/classLevelRoute");
 const programRouter = require("../routes/academics/programRoute");
 const subjectRouter = require("../routes/academics/subjectRoute");
 const yearGroupRouter = require("../routes/academics/yearGroupRoute");
+const examRouter = require("../routes/academics/examRoute");
 
 const {
   globalErrorHandler,
@@ -30,6 +31,7 @@ app.use("/api/v1/class-levels", classLevelRouter); // Class Level Router
 app.use("/api/v1/programs", programRouter); // Program Router
 app.use("/api/v1/subjects", subjectRouter); // Subject Router
 app.use("/api/v1/year-groups", yearGroupRouter); // Year GroupRouter 
+app.use("/api/v1/exams", examRouter); // Year GroupRouter 
 
 // Error handler's (middleware)
 app.use(notFound);

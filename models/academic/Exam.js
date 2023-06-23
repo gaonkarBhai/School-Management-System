@@ -10,7 +10,7 @@ const ExamSchema = new mongoose.Schema(
       type: String,
       required: [true, "description must be provided"],
     },
-    Subject: {
+    subject: {
       type: mongoose.Types.ObjectId,
       ref: "subject",
       required: [true, "Subject must be provided"],
@@ -28,17 +28,13 @@ const ExamSchema = new mongoose.Schema(
       type: Number,
       default: 100,
     },
-    academicTerm: {
-      type: mongoose.Types.ObjectId,
-      ref: "AcademicTerm",
-      required: [true, "AcademicTerm ID must be provided"],
-    },
+
     duration: {
       type: String,
       default: "90 min",
     },
     examDate: {
-      type: Date,
+      type: String,
       required: [true, "Exam date must be provided"],
     },
     examTime: {
@@ -76,6 +72,11 @@ const ExamSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "AcademicTerm",
       required: [true, "Academic Term ID must be provided"],
+    },
+    academicYear: {
+      type: mongoose.Types.ObjectId,
+      ref: "AcademicYear",
+      required: [true, "Academic Year ID must be provided"],
     },
   },
   { timestamps: true }
