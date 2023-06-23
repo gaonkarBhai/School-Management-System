@@ -20,7 +20,7 @@ const studentSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    teacherId: {
+    studentId: {
       type: String,
       default: function () {
         return (
@@ -47,7 +47,7 @@ const studentSchema = new mongoose.Schema(
       {
         type: mongoose.Types.ObjectId,
         ref: "ClassLevel",
-        required: [true, "classLevels ID must be provided"],
+        // required: [true, "classLevels ID must be provided"],
       },
     ],
     currentClassLevel: [
@@ -61,7 +61,7 @@ const studentSchema = new mongoose.Schema(
     academicYear: {
       type: mongoose.Types.ObjectId,
       ref: "AcademicYear",
-      required: [true, "AcademicYear ID must be provided"],
+      // required: [true, "AcademicYear ID must be provided"],
     },
     dateAdmitted: {
       type: Date,
@@ -76,7 +76,7 @@ const studentSchema = new mongoose.Schema(
     program: {
       type: mongoose.Types.ObjectId,
       ref: "Program",
-      required: [true, "program ID must be provided"],
+      // required: [true, "program ID must be provided"],
     },
     isPromotedToLevel200:{
         type:Boolean,
