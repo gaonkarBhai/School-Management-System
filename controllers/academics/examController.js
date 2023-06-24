@@ -51,7 +51,10 @@ const createExam = AsyncHandler(async (req, res) => {
 });
 
 const getAllExams = AsyncHandler(async (req, res) => {
-  const exams = await Exam.find({});
+  const exams = await Exam.find({}).populate({
+    path: "questions",
+    populate: { path: "createdBy" },
+  });
   res.status(201).json({
     status: "success",
     message: "Exams fetched successfully",
@@ -115,7 +118,7 @@ const deleteExam = AsyncHandler(async (req, res) => {
   const exam = await Exam.findByIdAndDelete(req.params.examID);
   res.status(201).json({
     status: "success",
-    message: "Exam deleted successfully"
+    message: "Exam deleted successfully",
   });
 });
 module.exports = {
