@@ -45,8 +45,7 @@ const studentSchema = new mongoose.Schema(
     },
     classLevels: [
       {
-        type: mongoose.Types.ObjectId,
-        ref: "ClassLevel",
+        type: String,
         // required: [true, "classLevels ID must be provided"],
       },
     ],

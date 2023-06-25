@@ -1,5 +1,4 @@
 const Admin = require("../models/staff/Admin");
-const verifyToken = require("../utils/verifyToken");
 
 const isAdmin = async (req, res, next) => {
   const userId = req?.userAuth?.id

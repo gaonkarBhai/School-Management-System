@@ -37,7 +37,6 @@ const programSchema = new mongoose.Schema(
       {
         type: mongoose.Types.ObjectId,
         ref: "Teacher",
-        required: [true, "Teacher Object Id must be provided"],
         default: [],
       },
     ],

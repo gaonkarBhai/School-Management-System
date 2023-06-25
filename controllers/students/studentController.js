@@ -1,5 +1,7 @@
 const AsyncHandler = require("express-async-handler");
 const Student = require("../../models/academic/Student");
+const Exam = require("../../models/academic/Exam");
+const ExamResult = require("../../models/academic/ExamResult");
 const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
 const { hashPassword, isPassword } = require("../../utils/helpers");
@@ -41,6 +43,7 @@ const loginStudent = AsyncHandler(async (req, res) => {
     });
   }
 });
+
 const getStudentProfile = AsyncHandler(async (req, res) => {
   const student = await Student.findById(req.userAuth?.id).select(
     "-password -createdAt -updatedAt"
@@ -54,6 +57,7 @@ const getStudentProfile = AsyncHandler(async (req, res) => {
     data: student,
   });
 });
+
 const getAllStudents = AsyncHandler(async (req, res) => {
   const students = await Student.find({});
   res.status(201).json({
@@ -62,6 +66,7 @@ const getAllStudents = AsyncHandler(async (req, res) => {
     data: students,
   });
 });
+
 const getSingleStudent = AsyncHandler(async (req, res) => {
   const student = await Student.findById(req.params.studentID);
   if (!student) {
@@ -73,6 +78,7 @@ const getSingleStudent = AsyncHandler(async (req, res) => {
     data: student,
   });
 });
+
 const updateStudentProfile = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const emailExist = await Student.findOne({ email });
@@ -127,6 +133,118 @@ const adminUpdateStudent = AsyncHandler(async (req, res) => {
   });
 });
 
+const writeExam = AsyncHandler(async (req, res) => {
+  const studentFound = await Student.findById(req.userAuth?.id);
+  if (!studentFound) {
+    throw new Error("Student not found");
+  }
+  const examFound = await Exam.findById(req.params.examID).populate(
+    "questions"
+  );
+  if (!examFound) {
+    throw new Error("Exam not found");
+  }
+  const questions = examFound?.questions;
+  const studentAnswers = req.body.answers;
+
+  if (studentAnswers.length != questions.length) {
+    throw new Error("You have not answered all the questions");
+  }
+  // check for duplication
+  const studentFoundInResult = await ExamResult.findOne({student:studentFound?._id})
+
+ if (studentFoundInResult) {
+   throw new Error("You already taken exam");
+ }
+  let correctAnswer = 0;
+  let wrongAnswer = 0;
+  let totalQuestion = questions.length;
+  let grade = 0;
+  let score = 0;
+  let answersedQuestion = 0;
+  let status = "";
+  let remark = "";
+
+  for (let i = 0; i < questions.length; i++) {
+    let question = questions[i];
+    if (question.correctAnswer === studentAnswers[i]) {
+      correctAnswer++;
+      score++;
+      question.isCorrect = true;
+    } else {
+      wrongAnswer++;
+    }
+  }
+  grade = (correctAnswer / totalQuestion) * 100;
+  answersedQuestion = questions.map((currQuestion) => {
+    return {
+      question: currQuestion.question,
+      correctAnswer: currQuestion.correctAnswer,
+      isCorrect: currQuestion.isCorrect,
+    };
+  });
+  if (grade >= 50) {
+    status = "passed";
+  } else {
+    status = "failed";
+  }
+  if (grade >= 90) {
+    remark = "Outstanding";
+  } else if (grade >= 80) {
+    remark = "Excellent";
+  } else if (grade >= 70) {
+    remark = "Very Good";
+  } else if (grade >= 60) {
+    remark = "Good";
+  } else if (grade >= 50) {
+    remark = "Fair";
+  } else {
+    remark = "Poor";
+  }
+  // exam result
+  const result = await ExamResult.create({
+    student: studentFound?._id,
+    exam: examFound?._id,
+    grade,
+    score,
+    status,
+    remark,
+    classLevel: examFound?.classLevel,
+    academicTerm: examFound?.academicTerm,
+    academicYear: examFound?.academicYear,
+  });
+  studentFound?.examResult.push(result?._id)
+  await studentFound.save()
+  res.status(200).json({
+    wrongAnswer,
+    correctAnswer,
+    score,
+    grade,
+    answersedQuestion,
+    status,
+    remark,
+  });
+});
+
+// const getQuestion = AsyncHandler(async (req,res)=>{
+//   const studentFound = await Student.findById(req.userAuth?.id)
+//   if(!studentFound){
+//     throw new Error('Student not found')
+//   }
+//   const examFound = await Exam.findById(req.params.examID).populate(
+//     "questions"
+//   );
+//   if (!examFound) {
+//     throw new Error("Exam not found");
+//   }
+//   const question = examFound?.questions
+//    res.status(200).json({
+//      status: "success",
+//      message: "Question found successfully",
+//      data: question,
+//    });
+// })
+
 module.exports = {
   adminRegisterStudent,
   loginStudent,
@@ -135,4 +253,5 @@ module.exports = {
   getSingleStudent,
   updateStudentProfile,
   adminUpdateStudent,
+  writeExam,
 };

@@ -2,7 +2,7 @@
 
 require('dotenv').config()
 const http = require('http')
-const app = require("./app/app")
+const app = require("./app/app") // Require Express app
 const conn = require('./config/conn')
 const PORT = process.env.PORT || 2023;
 

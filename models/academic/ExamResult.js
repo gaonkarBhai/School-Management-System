@@ -12,11 +12,11 @@ const examResultSchema = new mongoose.Schema(
       ref: "Exam",
       required: [true, "student ID must be provided"],
     },
-    subject: {
-      type: mongoose.Types.ObjectId,
-      ref: "Subject",
-      required: [true, "Subject ID must be provided"],
-    },
+    // subject: {
+    //   type: mongoose.Types.ObjectId,
+    //   ref: "Subject",
+    //   required: [true, "Subject ID must be provided"],
+    // },
     classLevel: {
       type: mongoose.Types.ObjectId,
       ref: "ClassLevel",
@@ -42,12 +42,12 @@ const examResultSchema = new mongoose.Schema(
     },
     passMark: {
       type: Number,
-      required: [true, "Passing marks must be provided"],
+      // required: [true, "Passing marks must be provided"],
     },
-    position: {
-      type: Number,
-      required: [true, "Position must be provided"],
-    },
+    // position: {
+    //   type: Number,
+    //   required: [true, "Position must be provided"],
+    // },
     status: {
       type: String,
       enum: ["failed", "passed"],
@@ -55,7 +55,7 @@ const examResultSchema = new mongoose.Schema(
     },
     remark: {
       type: String,
-      enum: ["outstanding", "excellent", "Good", "Poor"],
+      enum: ["Outstanding", "Excellent", "Good", "Poor",'Very Good'],
       default: "Poor",
     },
     isPublished: {

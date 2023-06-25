@@ -7,7 +7,7 @@ const isLogin = async (req, res, next) => {
     headerObj?.authorization?.split(" ")[1];
   const verifiedToken = verifyToken(token)
   if(verifiedToken){
-    const admin = await Admin.findById(verifiedToken.id).select("name email role")
+    await Admin.findById(verifiedToken.id).select("name email role")
     req.userAuth=verifiedToken
     next()
   }else{

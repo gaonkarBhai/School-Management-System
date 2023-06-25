@@ -2,6 +2,7 @@ const AsyncHandler = require("express-async-handler");
 const Admin = require("../../models/staff/Admin");
 const ClassLevel = require('../../models/academic/ClassLevel')
 
+// Create Class Level | POST
 const createClassLevel = AsyncHandler(async (req, res) => {
   const { name, description } = req.body;
   const classLevelFound = await ClassLevel.findOne({ name });
@@ -23,17 +24,21 @@ const createClassLevel = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get All Class Level | GET
 const getAllClassLevels = AsyncHandler(async (req, res) => {
   const classLevels = await ClassLevel.find({});
   res.status(200).json({
     status: "success",
-    message: "Class Levels fetched successfully",
+    message: "All Class Levels fetched successfully",
     data: classLevels,
   });
 });
 
+// Get Single Class Level | GET
 const getSingleClassLevel = AsyncHandler(async (req, res) => {
-  const classLevel = await ClassLevel.findById(req.params.id);
+  const classLevel = await ClassLevel.findById(req.params.id).populate(
+    "student subject teacher"
+  );
   res.status(200).json({
     status: "success",
     message: "ClassLevel fetched successfully",
@@ -41,6 +46,7 @@ const getSingleClassLevel = AsyncHandler(async (req, res) => {
   });
 });
 
+// Update Class Level | PUT
 const updateClassLevel = AsyncHandler(async (req, res) => {
   const { name, description } = req.body;
   const classLevelFound = await ClassLevel.findOne({ name });
@@ -63,6 +69,7 @@ const updateClassLevel = AsyncHandler(async (req, res) => {
   });
 });
 
+// Delete Class Level | DELETE
 const deleteClassLevel = AsyncHandler(async (req, res) => {
   const classLevelFound = await ClassLevel.findByIdAndDelete(req.params.id);
   res.status(200).json({

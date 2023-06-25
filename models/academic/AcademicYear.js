@@ -27,7 +27,6 @@ const AcademicYear = new mongoose.Schema(
       {
         type: mongoose.Types.ObjectId,
         ref: "Student",
-        required: [true, "Student ID must be provided"],
       },
     ],
     teachers: [

@@ -2,6 +2,7 @@ const AsyncHandler = require("express-async-handler");
 const Admin = require("../../models/staff/Admin");
 const AcademicTerm = require("../../models/academic/AcademicTerm");
 
+// Create Academic Term | POST
 const createAcademicTerm = AsyncHandler(async (req, res) => {
   const { name, description, duration } = req.body;
   const academicTerm = await AcademicTerm.findOne({ name });
@@ -24,6 +25,7 @@ const createAcademicTerm = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get All Academic Term | GET
 const getAllAcademicTerms = AsyncHandler(async (req, res) => {
   const academicTerms = await AcademicTerm.find({});
   res.status(200).json({
@@ -33,6 +35,7 @@ const getAllAcademicTerms = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get Single Academic Term | GET
 const getSingleAcademicTerm = AsyncHandler(async (req, res) => {
   const academicTerm = await AcademicTerm.findById(req.params.id);
   res.status(200).json({
@@ -42,6 +45,7 @@ const getSingleAcademicTerm = AsyncHandler(async (req, res) => {
   });
 });
 
+// Update Academic Term | PUT
 const updateAcademicTerm = AsyncHandler(async (req, res) => {
   const { name, description, duration } = req.body;
   const academicTermFound = await AcademicTerm.findOne({ name });
@@ -65,6 +69,7 @@ const updateAcademicTerm = AsyncHandler(async (req, res) => {
   });
 });
 
+// Delete Academic Term | DELETE
 const deleteAcademicTerm = AsyncHandler(async (req, res) => {
   const academicTermFound = await AcademicTerm.findByIdAndDelete(req.params.id);
   res.status(200).json({

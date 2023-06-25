@@ -3,6 +3,7 @@ const morgan = require("morgan");
 
 const app = express();
 
+// Requiring the App
 const adminRouter = require("../routes/staff/adminRouter");
 const teacherRouter = require("../routes/staff/teacherRouter");
 const studentRouter = require("../routes/staff/studentRouter");
@@ -15,6 +16,7 @@ const yearGroupRouter = require("../routes/academics/yearGroupRoute");
 const examRouter = require("../routes/academics/examRoute");
 const questionRouter = require("../routes/academics/questionRoute");
 
+// Require Error Handler's
 const {
   globalErrorHandler,
   notFound,

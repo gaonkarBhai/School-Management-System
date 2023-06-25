@@ -1,9 +1,8 @@
 const AsyncHandler = require("express-async-handler");
 const Admin = require("../../models/staff/Admin");
-const Student = require("../../models/academic/Student");
-const Teacher = require("../../models/staff/Teacher");
 const AcademicYear = require("../../models/academic/AcademicYear");
 
+// Create Academic Year | POST
 const createAcademicYear = AsyncHandler(async (req, res) => {
   const { name, fromYear, toYear } = req.body;
   const academicYear = await AcademicYear.findOne({ name });
@@ -16,9 +15,9 @@ const createAcademicYear = AsyncHandler(async (req, res) => {
     toYear,
     createdBy: req.userAuth.id,
   });
-  const admin = await Admin.findById(req.userAuth.id)
+  const admin = await Admin.findById(req.userAuth.id);
   admin.academicYears.push(newAcademicYear._id);
-  await admin.save()
+  await admin.save();
   res.status(201).json({
     status: "success",
     message: "Academic year created successfully",
@@ -26,6 +25,7 @@ const createAcademicYear = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get All Academic Year | GET
 const getAllAcademicYear = AsyncHandler(async (req, res) => {
   const academicYears = await AcademicYear.find({});
   res.status(200).json({
@@ -35,8 +35,11 @@ const getAllAcademicYear = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get Single Academic Year | GET
 const getSingleAcademicYear = AsyncHandler(async (req, res) => {
-  const academicYear = await AcademicYear.findById(req.params.id);
+  const academicYear = await AcademicYear.findById(req.params.id).populate(
+    "student teachers"
+  );
   res.status(200).json({
     status: "success",
     message: "Academic year fetched successfully",
@@ -44,18 +47,23 @@ const getSingleAcademicYear = AsyncHandler(async (req, res) => {
   });
 });
 
+// Update Academic Year | PUT
 const updateAcademicYear = AsyncHandler(async (req, res) => {
   const { name, fromYear, toYear } = req.body;
-  const academicYearFound = await AcademicYear.findOne({name})
+  const academicYearFound = await AcademicYear.findOne({ name });
   if (academicYearFound) {
     throw new Error("Academic year already exists");
   }
-  const academicYear = await AcademicYear.findByIdAndUpdate(req.params.id,{
-    name,
-    fromYear,
-    toYear,
-    createdBy: req.userAuth.id,
-  },{new:true,runValidators:true});
+  const academicYear = await AcademicYear.findByIdAndUpdate(
+    req.params.id,
+    {
+      name,
+      fromYear,
+      toYear,
+      createdBy: req.userAuth.id,
+    },
+    { new: true, runValidators: true }
+  );
   res.status(201).json({
     status: "success",
     message: "Academic year updated successfully",
@@ -63,8 +71,9 @@ const updateAcademicYear = AsyncHandler(async (req, res) => {
   });
 });
 
+// Delete Academic Year | DELETE
 const deleteAcademicYear = AsyncHandler(async (req, res) => {
-  const academicYearFound = await AcademicYear.findByIdAndDelete(req.params.id)
+  const academicYearFound = await AcademicYear.findByIdAndDelete(req.params.id);
   res.status(200).json({
     status: "success",
     message: "Academic year deleted successfully",

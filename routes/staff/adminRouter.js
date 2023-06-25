@@ -14,15 +14,16 @@ const {
   adminPublishExam,
   adminUnpublishExam,
 } = require("../../controllers/staff/adminController"); // Admin controllers
-const isAdmin = require('../../middlewares/isAdmin');
+// Admin Middleware's
 const isLogin = require('../../middlewares/isLogin') 
+const isAdmin = require('../../middlewares/isAdmin');
 
+// Admin Routes
 adminRouter.post("/register",registerAdmin);
 adminRouter.post("/login",loginAdmin);
 adminRouter.get("/", isLogin, isAdmin,getAllAdmin);
 adminRouter.get("/profile", isLogin, getAdmin);
 adminRouter.put("/", isLogin, isAdmin, updateAdmin);
-adminRouter.delete("/:id",deleteAdmin);
 adminRouter.patch("/suspend/teacher/:id",adminSuspendTeacher);
 adminRouter.patch("/unsuspend/teacher/:id", adminUnsuspendTeacher);
 adminRouter.patch("/withdraw/teacher/:id",adminWithdrawTeacher);

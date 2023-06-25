@@ -1,9 +1,7 @@
 const Teacher = require("../../models/staff/Teacher");
-const Admin = require("../../models/staff/Admin");
 const AsyncHandler = require("express-async-handler");
 const { hashPassword, isPassword } = require("../../utils/helpers");
 const generateToken = require("../../utils/generateToken");
-const verifyToken = require("../../utils/verifyToken");
 
 const registerTeacher = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;

@@ -2,8 +2,9 @@ const AsyncHandler = require("express-async-handler");
 const Subject = require("../../models/academic/Subject");
 const Program = require("../../models/academic/Program");
 
+// Create Subject | POST
 const createSubject = AsyncHandler(async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, duration } = req.body;
   const programFound = await Program.findById(req.params.programID)
   const subjectFound = await Subject.findOne({ name });
   if (!programFound) {
@@ -16,6 +17,7 @@ const createSubject = AsyncHandler(async (req, res) => {
     name,
     description,
     createdBy: req.userAuth.id,
+    duration,
   });
 
   programFound.subjects.push(newSubject._id);
@@ -28,6 +30,7 @@ const createSubject = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get All Subject | GET
 const getAllSubjects = AsyncHandler(async (req, res) => {
   const subjects = await Subject.find({});
   res.status(200).json({
@@ -37,6 +40,7 @@ const getAllSubjects = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get Single Subject | GET
 const getSingleSubject = AsyncHandler(async (req, res) => {
   const subject = await Subject.findById(req.params.id);
   res.status(200).json({
@@ -46,8 +50,9 @@ const getSingleSubject = AsyncHandler(async (req, res) => {
   });
 });
 
+// Update Subject | PUT
 const updateSubject = AsyncHandler(async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, duration } = req.body;
   const subjectFound = await Subject.findOne({ name });
   if (subjectFound) {
     throw new Error("Subject already exists");
@@ -68,6 +73,7 @@ const updateSubject = AsyncHandler(async (req, res) => {
   });
 });
 
+// Delete Single Subject | DELETE
 const deleteSubject = AsyncHandler(async (req, res) => {
   const subjectFound = await Subject.findByIdAndDelete(req.params.id);
   res.status(200).json({

@@ -2,6 +2,7 @@ const AsyncHandler = require("express-async-handler");
 const Admin = require("../../models/staff/Admin");
 const YearGroup = require("../../models/academic/YearGroup");
 
+// Create Year Group | POST
 const createYearGroup = AsyncHandler(async (req, res) => {
   const { name,academicYear} = req.body;
   const yearGroup = await YearGroup.findOne({ name });
@@ -13,7 +14,7 @@ const createYearGroup = AsyncHandler(async (req, res) => {
     academicYear,
     createdBy: req.userAuth.id,
   });
-  const admin = await Admin.findById(req.userAuth.id)
+  const admin = await Admin.findById(req.userAuth?.id)
   if(!admin){
     throw new Error("Admin not found")
   }
@@ -26,6 +27,7 @@ const createYearGroup = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get All Year Group | GET
 const getAllYearGroups = AsyncHandler(async (req, res) => {
   const yearGroups = await YearGroup.find({});
   res.status(200).json({
@@ -35,8 +37,11 @@ const getAllYearGroups = AsyncHandler(async (req, res) => {
   });
 });
 
+// Get Single Year Group | GET
 const getSingleYearGroup = AsyncHandler(async (req, res) => {
-  const yearGroup = await YearGroup.findById(req.params.id);
+  const yearGroup = await YearGroup.findById(req.params.id).populate(
+    "academicYear"
+  );
   res.status(200).json({
     status: "success",
     message: "Year Group fetched successfully",
@@ -44,6 +49,7 @@ const getSingleYearGroup = AsyncHandler(async (req, res) => {
   });
 });
 
+// Update Year Group | PUT
 const updateYearGroup = AsyncHandler(async (req, res) => {
   const { name, academicYear } = req.body;
   const yearGroupFound = await YearGroup.findOne({ name });
@@ -66,6 +72,7 @@ const updateYearGroup = AsyncHandler(async (req, res) => {
   });
 });
 
+// Delete Year Group | DELETE
 const deleteYearGroup = AsyncHandler(async (req, res) => {
   const yearGroupFound = await YearGroup.findByIdAndDelete(req.params.id);
   res.status(200).json({

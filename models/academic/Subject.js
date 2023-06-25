@@ -17,7 +17,6 @@ const subjectSchema = new mongoose.Schema(
     academicTerm: {
       type: mongoose.Types.ObjectId,
       ref: "AcademicTerm",
-      // required: [true, "Academic Term ID must be provided"],
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
@@ -26,7 +25,6 @@ const subjectSchema = new mongoose.Schema(
     },
     duration: {
       type: String,
-      required: [true, "Duration of the course must be provided"],
       default:"3 months"
     },
   },

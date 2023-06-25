@@ -1,16 +1,14 @@
 const Admin = require("../../models/staff/Admin");
 const AsyncHandler = require("express-async-handler");
 const generateToken = require("../../utils/generateToken");
-const verifyToken = require("../../utils/verifyToken");
 const {hashPassword, isPassword} =require('../../utils/helpers')
 
+// Admin Registration | POST
 const registerAdmin = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const adminFound = await Admin.findOne({ email });
   if (adminFound)
-    return res
-      .status(400)
-      .json({ status: "failed", message: "Admin already exists" });
+    throw new Error("Admin already exists")
   const hashedPassword = await hashPassword(password); // hashing psw
   const user = await Admin.create({ name, email, password: hashedPassword });
   res.status(201).send({
@@ -20,21 +18,16 @@ const registerAdmin = AsyncHandler(async (req, res) => {
   });
 });
 
+// Admin Login | POST
 const loginAdmin = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await Admin.findOne({ email });
   if (!user)
-    return res
-      .status(400)
-      .json({ status: "failed", message: "Admin does not exists" });
+    throw new Error("Admin does not exists")
   const isPasswordMatch = await isPassword(password, user.password); // comparing psw
   if (!isPasswordMatch) {
-    return res
-      .status(400)
-      .json({ status: "failed", message: "Invalid login crendentials" });
+        throw new Error("Invalid login crendentials")
   } else {
-    const token = generateToken(user._id);
-    const verify = verifyToken(token);
     return res.status(201).send({
       status: "success",
       data: generateToken(user._id),
@@ -43,19 +36,25 @@ const loginAdmin = AsyncHandler(async (req, res) => {
   }
 });
 
+// Get All Admins | GET
 const getAllAdmin = AsyncHandler(async (req, res) => {
-  const admins = await Admin.find({});
+  const admins = await Admin.find({}).select(
+    "-createdAt -updatedAt -__v -password"
+  );
   res.status(200).json({
     status: "success",
     data: admins,
-    message: "Admin fetched successfully",
+    message: "Admins fetched successfully",
   });
 });
 
+// Get Admin (Admin Profile) | GET
 const getAdmin = AsyncHandler(async (req, res) => {
   const admin = await Admin.findById(req.userAuth.id)
-    .select("-password -createdAt -updatedAt")
-    .populate("academicYears academicTerms classLevels");
+    .select("-createdAt -updatedAt -__v -password")
+    .populate(
+      "academicYears academicTerms classLevels teachers students programs yearGroups"
+    );
   if (!admin) {
     throw new Error("Admin not found");
   } else {
@@ -69,6 +68,7 @@ const getAdmin = AsyncHandler(async (req, res) => {
   }
 });
 
+// Update Admin (Admin Profile) | PUT
 const updateAdmin = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const emailExist = await Admin.findOne({email})
@@ -81,7 +81,7 @@ const updateAdmin = AsyncHandler(async (req, res) => {
       req.userAuth.id,
       { name, email, password: hashedPassword },
       { new: true, runValidators: true }
-    );
+    ).select("-createdAt -updatedAt -__v -password");
     return res.status(200).json({
       status: "success",
       data: admin,
@@ -92,7 +92,7 @@ const updateAdmin = AsyncHandler(async (req, res) => {
       req.userAuth.id,
       { name, email },
       { new: true, runValidators: true }
-    );
+    ).select("-createdAt -updatedAt -__v -password");
     return res.status(200).json({
       status: "success",
       data: admin,
@@ -101,20 +101,7 @@ const updateAdmin = AsyncHandler(async (req, res) => {
   }
 });
 
-const deleteAdmin = (req, res) => {
-  try {
-    res.status(201).send({
-      status: "success",
-      data: "delete Admin",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({
-      status: "failed",
-      data: error.message,
-    });
-  }
-};
+// Update Admin (Admin Profile) | PUT
 const adminSuspendTeacher = (req, res) => {
   try {
     res.status(201).send({
@@ -205,7 +192,6 @@ module.exports = {
   loginAdmin,
   getAdmin,
   getAllAdmin,
-  deleteAdmin,
   updateAdmin,
   adminSuspendTeacher,
   adminUnsuspendTeacher,
