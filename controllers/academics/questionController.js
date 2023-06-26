@@ -1,8 +1,8 @@
 const AsyncHandler = require("express-async-handler");
-const Teacher = require("../../models/staff/Teacher");
 const Exam = require("../../models/academic/Exam");
 const Question = require("../../models/academic/Question");
 
+//Teacher Create Question | POST
 const createQuestion = AsyncHandler(async (req, res) => {
   const {
     question,
@@ -13,11 +13,11 @@ const createQuestion = AsyncHandler(async (req, res) => {
     correctAnswer,
     createdBy,
   } = req.body;
-  const examFound = await Exam.findById(req.params.examID)
-  if(!examFound){
-    throw new Error("Exam not found")
+  const examFound = await Exam.findById(req.params.examID);
+  if (!examFound) {
+    throw new Error("Exam not found");
   }
-  const questionExists = await Question.findOne({question})
+  const questionExists = await Question.findOne({ question });
   if (questionExists) {
     throw new Error("Question already Exists");
   }
@@ -28,10 +28,10 @@ const createQuestion = AsyncHandler(async (req, res) => {
     optionC,
     optionD,
     correctAnswer,
-    createdBy:req.userAuth.id,
+    createdBy: req.userAuth.id,
   });
-  examFound.questions.push(newQuestion?._id)
-  await examFound.save()
+  examFound.questions.push(newQuestion?._id);
+  await examFound.save();
   res.status(201).json({
     status: "success",
     message: "New Question created successfully",
@@ -39,6 +39,7 @@ const createQuestion = AsyncHandler(async (req, res) => {
   });
 });
 
+//Teacher Get All Question | GET
 const getAllQuestions = AsyncHandler(async (req, res) => {
   const question = await Question.find({});
   res.status(201).json({
@@ -47,6 +48,8 @@ const getAllQuestions = AsyncHandler(async (req, res) => {
     data: question,
   });
 });
+
+//Teacher Get Question | GET
 const getSingleQuestion = AsyncHandler(async (req, res) => {
   const question = await Question.findById(req.params.questionID);
   res.status(201).json({
@@ -55,19 +58,21 @@ const getSingleQuestion = AsyncHandler(async (req, res) => {
     data: question,
   });
 });
+
+//Teacher update Question | PUT
 const updateQuestion = AsyncHandler(async (req, res) => {
-   const {
-     question,
-     optionA,
-     optionB,
-     optionC,
-     optionD,
-     correctAnswer,
-     createdBy,
-   } = req.body;
+  const {
+    question,
+    optionA,
+    optionB,
+    optionC,
+    optionD,
+    correctAnswer,
+    createdBy,
+  } = req.body;
   const questionExists = await Question.findOne({ question });
-  if(questionExists){
-    throw new Error("Question already exists")
+  if (questionExists) {
+    throw new Error("Question already exists");
   }
   const updatedQuestion = await Question.findByIdAndUpdate(
     req.params.questionID,
@@ -79,7 +84,8 @@ const updateQuestion = AsyncHandler(async (req, res) => {
       optionD,
       correctAnswer,
       createdBy: req.userAuth.id,
-    },{new:true}
+    },
+    { new: true }
   );
   res.status(201).json({
     status: "success",
@@ -87,6 +93,8 @@ const updateQuestion = AsyncHandler(async (req, res) => {
     data: updatedQuestion,
   });
 });
+
+//Teacher Delete Question | Delete
 const deleteQuestion = AsyncHandler(async (req, res) => {
   const question = await Question.findByIdAndDelete(req.params.questionID);
   res.status(200).json({
@@ -94,6 +102,7 @@ const deleteQuestion = AsyncHandler(async (req, res) => {
     message: "Question deleted successfully",
   });
 });
+
 module.exports = {
   createQuestion,
   getAllQuestions,

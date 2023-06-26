@@ -2,6 +2,7 @@ const AsyncHandler = require("express-async-handler");
 const Teacher = require("../../models/staff/Teacher");
 const Exam = require("../../models/academic/Exam");
 
+//Teacher create Exam | POST
 const createExam = AsyncHandler(async (req, res) => {
   const {
     name,
@@ -50,6 +51,7 @@ const createExam = AsyncHandler(async (req, res) => {
   });
 });
 
+//Teacher Get All Exam | GET
 const getAllExams = AsyncHandler(async (req, res) => {
   const exams = await Exam.find({}).populate({
     path: "questions",
@@ -61,14 +63,18 @@ const getAllExams = AsyncHandler(async (req, res) => {
     data: exams,
   });
 });
+
+//Teacher Get Single Exam | GET
 const getSingleExam = AsyncHandler(async (req, res) => {
   const exam = await Exam.findById(req.params.examID);
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     message: "Exam fetched successfully",
     data: exam,
   });
 });
+
+//Teacher Update Exam | PUT
 const updateExam = AsyncHandler(async (req, res) => {
   const {
     name,
@@ -114,6 +120,8 @@ const updateExam = AsyncHandler(async (req, res) => {
     data: exam,
   });
 });
+
+//Teacher Delete Exam | DELETE
 const deleteExam = AsyncHandler(async (req, res) => {
   const exam = await Exam.findByIdAndDelete(req.params.examID);
   res.status(201).json({
@@ -121,6 +129,7 @@ const deleteExam = AsyncHandler(async (req, res) => {
     message: "Exam deleted successfully",
   });
 });
+
 module.exports = {
   createExam,
   getAllExams,

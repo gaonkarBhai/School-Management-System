@@ -3,6 +3,7 @@ const AsyncHandler = require("express-async-handler");
 const { hashPassword, isPassword } = require("../../utils/helpers");
 const generateToken = require("../../utils/generateToken");
 
+// Register Teacher | POST
 const registerTeacher = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const teacher = await Teacher.findOne({ email });
@@ -22,6 +23,7 @@ const registerTeacher = AsyncHandler(async (req, res) => {
   });
 });
 
+// Login Teacher | POST
 const loginTeacher = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const teacher = await Teacher.findOne({ email });
@@ -45,6 +47,7 @@ const loginTeacher = AsyncHandler(async (req, res) => {
   }
 });
 
+// GET ALL Teachers | GET
 const getAllTeacher = AsyncHandler(async (req, res) => {
   const teachers = await Teacher.find({});
   res.status(201).json({
@@ -54,6 +57,7 @@ const getAllTeacher = AsyncHandler(async (req, res) => {
   });
 });
 
+// GET Single Teacher | GET
 const getSingleTeacher = AsyncHandler(async (req, res) => {
   const teacher = await Teacher.findById(req.params.teacherID);
   if (!teacher) {
@@ -66,6 +70,7 @@ const getSingleTeacher = AsyncHandler(async (req, res) => {
   });
 });
 
+// GET ALL Teachers | GET
 const getTeacherProfile = AsyncHandler(async (req, res) => {
   const teacher = await Teacher.findById(req.userAuth?.id).select(
     "-password -createdAt -updatedAt"
@@ -80,6 +85,7 @@ const getTeacherProfile = AsyncHandler(async (req, res) => {
   });
 });
 
+// Update Teacher Profile | PUT
 const updateTeacherProfile = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const emailExist = await Teacher.findOne({ email });
@@ -112,6 +118,7 @@ const updateTeacherProfile = AsyncHandler(async (req, res) => {
   }
 });
 
+//Admin Update Teacher | PUT
 const adminUpdatingTeacherProfile = AsyncHandler(async (req, res) => {
   const { program, classLevel, academicYear, subject } = req.body;
   const teacherFound = await Teacher.findById(req.params.teacherID);

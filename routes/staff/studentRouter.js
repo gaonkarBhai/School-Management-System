@@ -16,9 +16,9 @@ const isStudent = require('../../middlewares/isStudent')
 const isStudentLogin = require('../../middlewares/isStudentLogin') 
 
 studentRouter.post("/register",isLogin,isAdmin, adminRegisterStudent);
-studentRouter.post("/login", isLogin, isAdmin, loginStudent);
+studentRouter.post("/login", loginStudent);
 studentRouter.get("/profile", isStudentLogin, isStudent, getStudentProfile);
-studentRouter.get("/", isStudentLogin, isStudent, getAllStudents);
+studentRouter.get("/", isLogin, isAdmin, getAllStudents);
 studentRouter.put("/profile", isStudentLogin, isStudent, updateStudentProfile);
 studentRouter.get("/:studentID", isLogin, isAdmin, getSingleStudent);
 studentRouter.put("/:studentID", isLogin, isAdmin, adminUpdateStudent);

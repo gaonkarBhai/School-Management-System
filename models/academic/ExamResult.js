@@ -55,7 +55,7 @@ const examResultSchema = new mongoose.Schema(
     },
     remark: {
       type: String,
-      enum: ["Outstanding", "Excellent", "Good", "Poor",'Very Good'],
+      enum: ["Outstanding", "Excellent", "Good", "Poor",'Very Good',"Fair"],
       default: "Poor",
     },
     isPublished: {

@@ -3,9 +3,9 @@ const Student = require("../../models/academic/Student");
 const Exam = require("../../models/academic/Exam");
 const ExamResult = require("../../models/academic/ExamResult");
 const generateToken = require("../../utils/generateToken");
-const verifyToken = require("../../utils/verifyToken");
 const { hashPassword, isPassword } = require("../../utils/helpers");
 
+// Admin Register Student | POST
 const adminRegisterStudent = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const student = await Student.findOne({ email });
@@ -21,6 +21,7 @@ const adminRegisterStudent = AsyncHandler(async (req, res) => {
   });
 });
 
+// Student login | POST
 const loginStudent = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const student = await Student.findOne({ email });
@@ -44,6 +45,7 @@ const loginStudent = AsyncHandler(async (req, res) => {
   }
 });
 
+// Student Profile | GET
 const getStudentProfile = AsyncHandler(async (req, res) => {
   const student = await Student.findById(req.userAuth?.id).select(
     "-password -createdAt -updatedAt"
@@ -58,6 +60,7 @@ const getStudentProfile = AsyncHandler(async (req, res) => {
   });
 });
 
+// Student ALl Profile | GET
 const getAllStudents = AsyncHandler(async (req, res) => {
   const students = await Student.find({});
   res.status(201).json({
@@ -67,6 +70,7 @@ const getAllStudents = AsyncHandler(async (req, res) => {
   });
 });
 
+// Admin Single Student Profile | GET
 const getSingleStudent = AsyncHandler(async (req, res) => {
   const student = await Student.findById(req.params.studentID);
   if (!student) {
@@ -79,6 +83,7 @@ const getSingleStudent = AsyncHandler(async (req, res) => {
   });
 });
 
+// Student Update Profile | PUT
 const updateStudentProfile = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const emailExist = await Student.findOne({ email });
@@ -111,6 +116,7 @@ const updateStudentProfile = AsyncHandler(async (req, res) => {
   }
 });
 
+// Admin Update Student Profile | PUT
 const adminUpdateStudent = AsyncHandler(async (req, res) => {
   const { classLevels, program, name, email, perfectName, academicYear } =
     req.body;
@@ -133,13 +139,14 @@ const adminUpdateStudent = AsyncHandler(async (req, res) => {
   });
 });
 
+// Student Write Exam | POST
 const writeExam = AsyncHandler(async (req, res) => {
   const studentFound = await Student.findById(req.userAuth?.id);
   if (!studentFound) {
     throw new Error("Student not found");
   }
   const examFound = await Exam.findById(req.params.examID).populate(
-    "questions"
+    "questions academicTerm"
   );
   if (!examFound) {
     throw new Error("Exam not found");
@@ -151,11 +158,12 @@ const writeExam = AsyncHandler(async (req, res) => {
     throw new Error("You have not answered all the questions");
   }
   // check for duplication
-  const studentFoundInResult = await ExamResult.findOne({student:studentFound?._id})
+//   const studentFoundInResult = await ExamResult.findOne({student:studentFound?._id})
 
- if (studentFoundInResult) {
-   throw new Error("You already taken exam");
- }
+//  if (studentFoundInResult) {
+//    throw new Error("You already taken exam");
+//  }
+
   let correctAnswer = 0;
   let wrongAnswer = 0;
   let totalQuestion = questions.length;
@@ -202,19 +210,20 @@ const writeExam = AsyncHandler(async (req, res) => {
     remark = "Poor";
   }
   // exam result
-  const result = await ExamResult.create({
-    student: studentFound?._id,
-    exam: examFound?._id,
-    grade,
-    score,
-    status,
-    remark,
-    classLevel: examFound?.classLevel,
-    academicTerm: examFound?.academicTerm,
-    academicYear: examFound?.academicYear,
-  });
-  studentFound?.examResult.push(result?._id)
-  await studentFound.save()
+  // const result = await ExamResult.create({
+  //   student: studentFound?._id,
+  //   exam: examFound?._id,
+  //   grade,
+  //   score,
+  //   status,
+  //   remark,
+  //   classLevel: examFound?.classLevel,
+  //   academicTerm: examFound?.academicTerm,
+  //   academicYear: examFound?.academicYear,
+  // });
+  // studentFound?.examResult.push(result?._id)
+  // await studentFound.save()
+
   res.status(200).json({
     wrongAnswer,
     correctAnswer,
@@ -225,25 +234,6 @@ const writeExam = AsyncHandler(async (req, res) => {
     remark,
   });
 });
-
-// const getQuestion = AsyncHandler(async (req,res)=>{
-//   const studentFound = await Student.findById(req.userAuth?.id)
-//   if(!studentFound){
-//     throw new Error('Student not found')
-//   }
-//   const examFound = await Exam.findById(req.params.examID).populate(
-//     "questions"
-//   );
-//   if (!examFound) {
-//     throw new Error("Exam not found");
-//   }
-//   const question = examFound?.questions
-//    res.status(200).json({
-//      status: "success",
-//      message: "Question found successfully",
-//      data: question,
-//    });
-// })
 
 module.exports = {
   adminRegisterStudent,
