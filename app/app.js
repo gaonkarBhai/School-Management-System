@@ -15,6 +15,7 @@ const subjectRouter = require("../routes/academics/subjectRoute");
 const yearGroupRouter = require("../routes/academics/yearGroupRoute");
 const examRouter = require("../routes/academics/examRoute");
 const questionRouter = require("../routes/academics/questionRoute");
+const examResultRoute = require("../routes/academics/examResultRoute");
 
 // Require Error Handler's
 const {
@@ -38,6 +39,7 @@ app.use("/api/v1/subjects", subjectRouter); // Subject Router
 app.use("/api/v1/year-groups", yearGroupRouter); // Year GroupRouter 
 app.use("/api/v1/exams", examRouter); // Year GroupRouter 
 app.use("/api/v1/questions", questionRouter); // Question Router
+app.use("/api/v1/results", examResultRoute); // Exam Result Route 
 
 // Error handler's (middleware)
 app.use(notFound);

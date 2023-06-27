@@ -118,8 +118,16 @@ const updateStudentProfile = AsyncHandler(async (req, res) => {
 
 // Admin Update Student Profile | PUT
 const adminUpdateStudent = AsyncHandler(async (req, res) => {
-  const { classLevels, program, name, email, perfectName, academicYear } =
-    req.body;
+  const {
+    classLevels,
+    program,
+    name,
+    email,
+    perfectName,
+    academicYear,
+    isWitdrawn,
+    isSuspended,
+  } = req.body;
   const student = await Student.findById(req.params.studentID);
   if (!student) {
     throw new Error("No student found");
@@ -127,7 +135,15 @@ const adminUpdateStudent = AsyncHandler(async (req, res) => {
   const updatedStudent = await Student.findByIdAndUpdate(
     req.params.studentID,
     {
-      $set: { program, name, email, perfectName, academicYear },
+      $set: {
+        program,
+        name,
+        email,
+        perfectName,
+        academicYear,
+        isWitdrawn,
+        isSuspended,
+      },
       $addToSet: { classLevels },
     },
     { new: true }
@@ -158,11 +174,16 @@ const writeExam = AsyncHandler(async (req, res) => {
     throw new Error("You have not answered all the questions");
   }
   // check for duplication
-//   const studentFoundInResult = await ExamResult.findOne({student:studentFound?._id})
+  const studentFoundInResult = await ExamResult.findOne({
+    student: studentFound?._id,
+  });
 
-//  if (studentFoundInResult) {
-//    throw new Error("You already taken exam");
-//  }
+  if (studentFoundInResult) {
+    throw new Error("You already taken exam");
+  }
+  if (studentFound.isWitdrawn || studentFound.isSuspended) {
+    throw new Error("You are suspended/withdrawn, You can't write exam");
+  }
 
   let correctAnswer = 0;
   let wrongAnswer = 0;
@@ -210,28 +231,60 @@ const writeExam = AsyncHandler(async (req, res) => {
     remark = "Poor";
   }
   // exam result
-  // const result = await ExamResult.create({
-  //   student: studentFound?._id,
-  //   exam: examFound?._id,
-  //   grade,
-  //   score,
-  //   status,
-  //   remark,
-  //   classLevel: examFound?.classLevel,
-  //   academicTerm: examFound?.academicTerm,
-  //   academicYear: examFound?.academicYear,
-  // });
-  // studentFound?.examResult.push(result?._id)
-  // await studentFound.save()
-
-  res.status(200).json({
-    wrongAnswer,
-    correctAnswer,
-    score,
+  const result = await ExamResult.create({
+    student: studentFound?._id,
+    exam: examFound?._id,
     grade,
-    answersedQuestion,
+    score,
     status,
     remark,
+    classLevel: examFound?.classLevel,
+    academicTerm: examFound?.academicTerm,
+    academicYear: examFound?.academicYear,
+  });
+  studentFound?.examResult.push(result?._id)
+  await studentFound.save()
+
+  if (
+    examFound.academicTerm.name === "2nd term" &&
+    status == "passed" &&
+    studentFound?.currentClassLevel == "1st year"
+  ) {
+    studentFound.classLevels.push("2nd year");
+    studentFound.currentClassLevel = "2nd year";
+    await studentFound.save();
+  }
+  if (
+    examFound.academicTerm.name === "4nd term" &&
+    status == "passed" &&
+    studentFound?.currentClassLevel == "2st year"
+  ) {
+    studentFound.classLevels.push("3nd year");
+    studentFound.currentClassLevel = "3nd year";
+    await studentFound.save();
+  }
+  if (
+    examFound.academicTerm.name === "6nd term" &&
+    status == "passed" &&
+    studentFound?.currentClassLevel == "3st year"
+  ) {
+    studentFound.classLevels.push("4nd year");
+    studentFound.currentClassLevel = "4nd year";
+    await studentFound.save();
+  }
+  if (
+    examFound.academicTerm.name === "8nd term" &&
+    status == "passed" &&
+    studentFound?.currentClassLevel == "4st year"
+  ) {
+    studentFound.isGraduated = true;
+    studentFound.yearGraduated = new Date();
+    await studentFound.save();
+  }
+
+  res.status(200).json({
+    status:"success",
+    data:"you have submitted you exam. Check later for your result"
   });
 });
 
