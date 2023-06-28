@@ -1,5 +1,6 @@
 const AsyncHandler = require("express-async-handler");
 const Student = require("../../models/academic/Student");
+const Admin = require("../../models/staff/Admin");
 const Exam = require("../../models/academic/Exam");
 const ExamResult = require("../../models/academic/ExamResult");
 const generateToken = require("../../utils/generateToken");
@@ -8,12 +9,18 @@ const { hashPassword, isPassword } = require("../../utils/helpers");
 // Admin Register Student | POST
 const adminRegisterStudent = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
+  const adminFound = await Admin.findById(req.userAuth?.id);
+  if (!adminFound) {
+    throw new Error("Admin not found");
+  }
   const student = await Student.findOne({ email });
   if (student) {
     throw new Error("Student already exists");
   }
   const hashedPassword = await hashPassword(password); // hashing psw
   const user = await Student.create({ name, email, password: hashedPassword });
+  adminFound?.students.push(user?._id);
+  await adminFound.save();
   res.status(201).json({
     status: "success",
     message: "Student created successfully",
@@ -47,16 +54,33 @@ const loginStudent = AsyncHandler(async (req, res) => {
 
 // Student Profile | GET
 const getStudentProfile = AsyncHandler(async (req, res) => {
-  const student = await Student.findById(req.userAuth?.id).select(
-    "-password -createdAt -updatedAt"
-  );
+  const student = await Student.findById(req.userAuth?.id)
+    .select("-password -createdAt -updatedAt")
+    .populate("examResult");
   if (!student) {
     throw new Error("No student found");
   }
+  const studentProfile = {
+    name: student?.name,
+    email: student?.email,
+    currentClassLevel: student?.currentClassLevel,
+    program: student?.program,
+    dateAdmitted: student?.dateAdmitted,
+    isSuspended: student?.isSuspended,
+    isWitdrawn: student?.isWitdrawn,
+    studentId: student?.studentId,
+    perfectName: student?.perfectName,
+  };
+  const examResult = student?.examResult;
+  const currentExamResult = examResult[examResult.length - 1];
+  const isPublished = currentExamResult?.isPublished;
   res.status(201).json({
     status: "success",
     message: "Student fetched successfully",
-    data: student,
+    data: {
+      studentProfile,
+      currentExamResult: isPublished ? currentExamResult : [],
+    },
   });
 });
 
@@ -232,7 +256,7 @@ const writeExam = AsyncHandler(async (req, res) => {
   }
   // exam result
   const result = await ExamResult.create({
-    student: studentFound?._id,
+    studentID: studentFound?.studentId,
     exam: examFound?._id,
     grade,
     score,
@@ -241,9 +265,10 @@ const writeExam = AsyncHandler(async (req, res) => {
     classLevel: examFound?.classLevel,
     academicTerm: examFound?.academicTerm,
     academicYear: examFound?.academicYear,
+    answeredQuestions: answersedQuestion,
   });
-  studentFound?.examResult.push(result?._id)
-  await studentFound.save()
+  studentFound?.examResult.push(result?._id);
+  await studentFound.save();
 
   if (
     examFound.academicTerm.name === "2nd term" &&
@@ -283,8 +308,8 @@ const writeExam = AsyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    status:"success",
-    data:"you have submitted you exam. Check later for your result"
+    status: "success",
+    data: "you have submitted you exam. Check later for your result",
   });
 });
 

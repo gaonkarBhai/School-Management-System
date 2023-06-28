@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 
 const examResultSchema = new mongoose.Schema(
   {
-    student: {
-      type: mongoose.Types.ObjectId,
-      ref: "Student",
+    studentID: {
+      type: String,
       required: [true, "student ID must be provided"],
     },
     exam: {
@@ -62,6 +61,11 @@ const examResultSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    answeredQuestions:[
+      {
+        type:Object
+      }
+    ]
   },
   { timestamps: true }
 );

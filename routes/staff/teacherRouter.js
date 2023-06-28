@@ -14,7 +14,7 @@ const isLogin = require('../../middlewares/isLogin')
 const isTeacher = require("../../middlewares/isTeacher"); 
 const isTeacherLogin = require("../../middlewares/isTeacherLogin"); 
 
-teacherRouter.post("/register", registerTeacher);
+teacherRouter.post("/register",isLogin,isAdmin, registerTeacher);
 teacherRouter.post("/login", loginTeacher);
 teacherRouter.get("/", isLogin,isAdmin, getAllTeacher);
 teacherRouter.get("/profile", isTeacherLogin, isTeacher, getTeacherProfile);

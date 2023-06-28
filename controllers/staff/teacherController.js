@@ -1,4 +1,5 @@
 const Teacher = require("../../models/staff/Teacher");
+const Admin = require("../../models/staff/Admin");
 const AsyncHandler = require("express-async-handler");
 const { hashPassword, isPassword } = require("../../utils/helpers");
 const generateToken = require("../../utils/generateToken");
@@ -6,6 +7,10 @@ const generateToken = require("../../utils/generateToken");
 // Register Teacher | POST
 const registerTeacher = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
+  const adminFound = await Admin.findById(req.userAuth?.id);
+  if (!adminFound) {
+    throw new Error("Admin not found");
+  }
   const teacher = await Teacher.findOne({ email });
   if (teacher) {
     throw new Error("Teacher already employed");
@@ -16,6 +21,8 @@ const registerTeacher = AsyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
   });
+  adminFound?.teachers.push(newTeacher?._id);
+  await adminFound.save();
   res.status(201).json({
     status: "success",
     message: "Teacher registered successfully",
@@ -49,7 +56,13 @@ const loginTeacher = AsyncHandler(async (req, res) => {
 
 // GET ALL Teachers | GET
 const getAllTeacher = AsyncHandler(async (req, res) => {
-  const teachers = await Teacher.find({});
+  const { limit, page,name } = req.query;
+  const skip = (Number(page || 1) - 1) * Number(limit || 2);
+  let teachersQuery = Teacher.find();
+  if(name){
+    teachersQuery.find({ name: { $regex: req.query?.name, $options: "i" } });
+  }
+  const teachers = await teachersQuery.skip(skip).limit(limit);
   res.status(201).json({
     status: "success",
     message: "All Teachers fetched successfully",
@@ -70,7 +83,7 @@ const getSingleTeacher = AsyncHandler(async (req, res) => {
   });
 });
 
-// GET ALL Teachers | GET
+// GET Teachers Profile | GET
 const getTeacherProfile = AsyncHandler(async (req, res) => {
   const teacher = await Teacher.findById(req.userAuth?.id).select(
     "-password -createdAt -updatedAt"
@@ -125,14 +138,13 @@ const adminUpdatingTeacherProfile = AsyncHandler(async (req, res) => {
   if (!teacherFound) {
     throw new Error("Teacher not found");
   }
-  if (teacherFound.isWitdrawn){
+  if (teacherFound.isWitdrawn) {
     throw new Error("Action denied teacher is withdrawn");
-
   }
-    if (program) {
-      teacherFound.program = program;
-      await teacherFound.save();
-    }
+  if (program) {
+    teacherFound.program = program;
+    await teacherFound.save();
+  }
   if (classLevel) {
     teacherFound.classLevel = classLevel;
     await teacherFound.save();
