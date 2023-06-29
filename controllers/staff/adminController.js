@@ -38,14 +38,7 @@ const loginAdmin = AsyncHandler(async (req, res) => {
 
 // Get All Admins | GET
 const getAllAdmin = AsyncHandler(async (req, res) => {
-  const admins = await Admin.find({}).select(
-    "-createdAt -updatedAt -__v -password"
-  );
-  res.status(200).json({
-    status: "success",
-    data: admins,
-    message: "Admins fetched successfully",
-  });
+  res.status(200).json(res.result);
 });
 
 // Get Admin (Admin Profile) | GET

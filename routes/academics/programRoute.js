@@ -7,18 +7,19 @@ const {
   deletePrograms,
 } = require("../../controllers/academics/programController");
 const isAdmin = require("../../middlewares/isAdmin");
-const isLogin = require("../../middlewares/isLogin");
+const Admin = require("../../models/staff/Admin");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
 
 // express route chaining
 programRouter
   .route("/")
-  .post(isLogin, isAdmin, createProgram)
-  .get(isLogin, isAdmin, getAllPrograms);
+  .post(isAuthenicated(Admin), isAdmin, createProgram)
+  .get(isAuthenicated(Admin), isAdmin, getAllPrograms);
 
 programRouter
   .route("/:id")
-  .get(isLogin, isAdmin, getSingleProgram)
-  .put(isLogin, isAdmin, updateProgram)
-  .delete(isLogin, isAdmin, deletePrograms);
+  .get(isAuthenicated(Admin), isAdmin, getSingleProgram)
+  .put(isAuthenicated(Admin), isAdmin, updateProgram)
+  .delete(isAuthenicated(Admin), isAdmin, deletePrograms);
 
 module.exports = programRouter;

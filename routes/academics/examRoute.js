@@ -8,15 +8,17 @@ const {
 } = require("../../controllers/academics/examController");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
+const Teacher = require("../../models/staff/Teacher");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
 
 // express route chaining
 examRouter
   .route("/")
-  .post(isTeacherLogin, isTeacher, createExam)
-  .get(isTeacherLogin, isTeacher, getAllExams);
+  .post(isAuthenicated(Teacher), isTeacher, createExam)
+  .get(isAuthenicated(Teacher), isTeacher, getAllExams);
 examRouter
   .route("/:examID")
-  .get(isTeacherLogin, isTeacher, getSingleExam)
-  .put(isTeacherLogin, isTeacher, updateExam)
-  .delete(isTeacherLogin, isTeacher, deleteExam);
+  .get(isAuthenicated(Teacher), isTeacher, getSingleExam)
+  .put(isAuthenicated(Teacher), isTeacher, updateExam)
+  .delete(isAuthenicated(Teacher), isTeacher, deleteExam);
 module.exports = examRouter;

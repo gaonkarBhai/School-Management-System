@@ -56,18 +56,8 @@ const loginTeacher = AsyncHandler(async (req, res) => {
 
 // GET ALL Teachers | GET
 const getAllTeacher = AsyncHandler(async (req, res) => {
-  const { limit, page,name } = req.query;
-  const skip = (Number(page || 1) - 1) * Number(limit || 2);
-  let teachersQuery = Teacher.find();
-  if(name){
-    teachersQuery.find({ name: { $regex: req.query?.name, $options: "i" } });
-  }
-  const teachers = await teachersQuery.skip(skip).limit(limit);
-  res.status(201).json({
-    status: "success",
-    message: "All Teachers fetched successfully",
-    data: teachers,
-  });
+
+  res.status(200).json(res.result);
 });
 
 // GET Single Teacher | GET

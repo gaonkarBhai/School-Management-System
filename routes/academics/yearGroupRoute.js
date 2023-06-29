@@ -7,18 +7,19 @@ const {
   deleteYearGroup,
 } = require("../../controllers/academics/yearGroupsController");
 const isAdmin = require("../../middlewares/isAdmin");
-const isLogin = require("../../middlewares/isLogin");
+const Admin = require("../../models/staff/Admin");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
 
 // express route chaining
 yearGroupRouter
   .route("/")
-  .post(isLogin, isAdmin, createYearGroup)
-  .get(isLogin, isAdmin, getAllYearGroups);
+  .post(isAuthenicated(Admin), isAdmin, createYearGroup)
+  .get(isAuthenicated(Admin), isAdmin, getAllYearGroups);
 
 yearGroupRouter
   .route("/:id")
-  .get(isLogin, isAdmin, getSingleYearGroup)
-  .put(isLogin, isAdmin, updateYearGroup)
-  .delete(isLogin, isAdmin, deleteYearGroup);
+  .get(isAuthenicated(Admin), isAdmin, getSingleYearGroup)
+  .put(isAuthenicated(Admin), isAdmin, updateYearGroup)
+  .delete(isAuthenicated(Admin), isAdmin, deleteYearGroup);
 
 module.exports = yearGroupRouter;

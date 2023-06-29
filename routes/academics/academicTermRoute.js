@@ -7,18 +7,20 @@ const {
   deleteAcademicTerm,
 } = require("../../controllers/academics/academicTermController");
 const isAdmin = require("../../middlewares/isAdmin");
-const isLogin = require("../../middlewares/isLogin");
+const Admin = require("../../models/staff/Admin");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
+
 
 // express route chaining
 academicTermRouter
   .route("/")
-  .post(isLogin, isAdmin, createAcademicTerm)
-  .get(isLogin, isAdmin, getAllAcademicTerms);
+  .post(isAuthenicated(Admin), isAdmin, createAcademicTerm)
+  .get(isAuthenicated(Admin), isAdmin, getAllAcademicTerms);
 
 academicTermRouter
   .route("/:id")
-  .get(isLogin, isAdmin, getSingleAcademicTerm)
-  .put(isLogin, isAdmin, updateAcademicTerm)
-  .delete(isLogin, isAdmin, deleteAcademicTerm);
+  .get(isAuthenicated(Admin), isAdmin, getSingleAcademicTerm)
+  .put(isAuthenicated(Admin), isAdmin, updateAcademicTerm)
+  .delete(isAuthenicated(Admin), isAdmin, deleteAcademicTerm);
 
 module.exports = academicTermRouter;

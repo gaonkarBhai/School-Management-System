@@ -5,11 +5,13 @@ const {
   adminPublishResult
 } = require("../../controllers/academics/examResultController");
 const isStudent = require("../../middlewares/isStudent");
-const isStudentLogin = require("../../middlewares/isStudentLogin"); 
-const isLogin = require("../../middlewares/isLogin");
+const Admin = require("../../models/staff/Admin");
+const Student = require("../../models/academic/Student");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
 const isAdmin = require("../../middlewares/isAdmin");
-// express route chaining
-examResultRouter.get("/", isLogin, isAdmin,checkAllResult);
-examResultRouter.get("/:examID", isStudentLogin, isStudent,checkResult);
-examResultRouter.post("/:examID", isLogin, isAdmin, adminPublishResult);
+
+examResultRouter.get("/", isAuthenicated(Admin), isAdmin,checkAllResult);
+examResultRouter.get("/:examID", isAuthenicated(Student), isStudent,checkResult);
+examResultRouter.post("/:examID", isAuthenicated(Admin), isAdmin, adminPublishResult);
+
 module.exports = examResultRouter;

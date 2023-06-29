@@ -7,16 +7,17 @@ const {
   deleteSubject,
 } = require("../../controllers/academics/subjectController");
 const isAdmin = require("../../middlewares/isAdmin");
-const isLogin = require("../../middlewares/isLogin");
+const Admin = require("../../models/staff/Admin");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
 
 // express route chaining
-subjectRouter.route("/:programID").post(isLogin, isAdmin, createSubject);
-subjectRouter.route("/").get(isLogin, isAdmin, getAllSubjects);
+subjectRouter.route("/:programID").post(isAuthenicated(Admin), isAdmin, createSubject);
+subjectRouter.route("/").get(isAuthenicated(Admin), isAdmin, getAllSubjects);
 
 subjectRouter
   .route("/:id")
-  .get(isLogin, isAdmin, getSingleSubject)
-  .put(isLogin, isAdmin, updateSubject)
-  .delete(isLogin, isAdmin, deleteSubject);
+  .get(isAuthenicated(Admin), isAdmin, getSingleSubject)
+  .put(isAuthenicated(Admin), isAdmin, updateSubject)
+  .delete(isAuthenicated(Admin), isAdmin, deleteSubject);
 
 module.exports = subjectRouter;

@@ -1,11 +1,11 @@
 const adminRouter = require('express').Router()
+const Admin = require("../../models/staff/Admin");
 
 const {
   registerAdmin,
   loginAdmin,
   getAdmin,
   getAllAdmin,
-  deleteAdmin,
   updateAdmin,
   adminSuspendTeacher,
   adminUnsuspendTeacher,
@@ -15,15 +15,22 @@ const {
   adminUnpublishExam,
 } = require("../../controllers/staff/adminController"); // Admin controllers
 // Admin Middleware's
-const isLogin = require('../../middlewares/isLogin') 
-const isAdmin = require('../../middlewares/isAdmin');
+const isAdmin = require("../../middlewares/isAdmin");
+const advancedResult = require("../../middlewares/advancedResult");
+const {isAuthenicated} = require("../../middlewares/isAuthenticated");
 
 // Admin Routes
 adminRouter.post("/register",registerAdmin);
 adminRouter.post("/login",loginAdmin);
-adminRouter.get("/", isLogin, isAdmin,getAllAdmin);
-adminRouter.get("/profile", isLogin, getAdmin);
-adminRouter.put("/", isLogin, isAdmin, updateAdmin);
+adminRouter.get(
+  "/",
+  isAuthenicated(Admin),
+  isAdmin,
+  advancedResult(Admin),
+  getAllAdmin
+);
+adminRouter.get("/profile", isAuthenicated(Admin), isAdmin, getAdmin);
+adminRouter.put("/", isAuthenicated(Admin), isAdmin, updateAdmin);
 adminRouter.patch("/suspend/teacher/:id",adminSuspendTeacher);
 adminRouter.patch("/unsuspend/teacher/:id", adminUnsuspendTeacher);
 adminRouter.patch("/withdraw/teacher/:id",adminWithdrawTeacher);

@@ -7,18 +7,19 @@ const {
   deleteClassLevel,
 } = require("../../controllers/academics/classLevelController");
 const isAdmin = require("../../middlewares/isAdmin");
-const isLogin = require("../../middlewares/isLogin");
+const Admin = require("../../models/staff/Admin");
+const { isAuthenicated } = require("../../middlewares/isAuthenticated");
 
 // express route chaining
 classLevelRouter
   .route("/")
-  .post(isLogin, isAdmin, createClassLevel)
-  .get(isLogin, isAdmin, getAllClassLevels);
+  .post(isAuthenicated(Admin), isAdmin, createClassLevel)
+  .get(isAuthenicated(Admin), isAdmin, getAllClassLevels);
 
 classLevelRouter
   .route("/:id")
-  .get(isLogin, isAdmin, getSingleClassLevel)
-  .put(isLogin, isAdmin, updateClassLevel)
-  .delete(isLogin, isAdmin, deleteClassLevel);
+  .get(isAuthenicated(Admin), isAdmin, getSingleClassLevel)
+  .put(isAuthenicated(Admin), isAdmin, updateClassLevel)
+  .delete(isAuthenicated(Admin), isAdmin, deleteClassLevel);
 
 module.exports = classLevelRouter;

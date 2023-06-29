@@ -31,6 +31,7 @@ app.use(express.json());
 app.use("/api/v1/admins", adminRouter); // Admin Router
 app.use("/api/v1/teachers", teacherRouter); // Teacher Router
 app.use("/api/v1/students", studentRouter); // Student Router
+
 app.use("/api/v1/academic-years", academicYearRouter); // Academic Year Router
 app.use("/api/v1/academic-terms", academicTermRouter); // Academic Term Router
 app.use("/api/v1/class-levels", classLevelRouter); // Class Level Router
